@@ -4,10 +4,30 @@
 
     <div class="container">
         <h1>PAGINA DA PERGUNTA</h1>
+        <a href="/" class="btn btn-success">VOLTAR</a>
         <hr>
         <h1><%= pergunta.titulo %></h1>
         <h6><%= pergunta.descricao %></h6>
         <hr>
+        <form method="POST" action="/salvarResposta">
+            <h3>RESPONDA</h3>
+            <input  type="hidden" name="idPergunta" value="<%= pergunta.id %>"> 
+            <label>Resposta:</label>
+            <textarea placeholder="Digite Sua Resposta" class="form-control" name="corpoResposta">
+            </textarea><br>   
+            <button type="submit" class="btn btn-primary"> RESPONDER</button>
+        </form>
+        <hr>
+        <h3>RESPOSTAS</h3>
+        <hr>
+        <% respostas.forEach((resposta)=>{ %>
+            <br>
+            <div class="card">
+                <div class="card-body">
+                    <p><%= resposta.corpo %></p>
+                </div>
+            </div>
+        <% }) %>
     </div>
 
 

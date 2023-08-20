@@ -2,7 +2,9 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser"); 
 const connection = require("./database/database");
+//MODELS
 const Pergunta = require("./database/Pergunta");
+const Resposta = require("./database/Resposta");
 //database
 connection
     .authenticate()
@@ -50,14 +52,35 @@ app.post("/salvarPergunta",(req,res)=>{
     });
 });
 
+app.post("/salvarResposta",(req,res)=>{
+    var corpo = req.body.corpoResposta;
+    var idPergunta = req.body.idPergunta;
+    
+    Resposta.create({
+        corpo:corpo,
+        perguntaId:idPergunta
+    }).then(()=>{
+        res.redirect("/pergunta/"+idPergunta);
+    });
+});
+
 app.get("/pergunta/:id",(req,res)=>{
     var id = req.params.id;
     Pergunta.findOne({
         where:{id:id}
     }).then((pergunta)=>{
         if(pergunta != undefined){ //ACHOU PERGUNTA
-            res.render("pergunta",{
-                pergunta:pergunta
+
+            Resposta.findAll({
+                where:{perguntaId:pergunta.id},
+                order:[
+                    ['id','DESC']
+                ]
+            }).then((respostas)=>{
+                res.render("pergunta",{
+                    pergunta:pergunta,
+                    respostas:respostas
+                });
             });
         }else{//NAO ENCONTRADA
             res.redirect("/");
