@@ -22,8 +22,10 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
 app.get("/",(req,res)=>{
-    Pergunta.findAll({raw:true}).then((perguntas)=>{
-        console.log(perguntas);
+    Pergunta.findAll({raw:true,order:[
+        ['id','DESC'] //ASC SE FOSSE CRESCENTE
+    ]}).then((perguntas)=>{
+        //console.log(perguntas);
         res.render("index",{
             perguntas:perguntas
         });
@@ -48,6 +50,20 @@ app.post("/salvarPergunta",(req,res)=>{
     });
 });
 
+app.get("/pergunta/:id",(req,res)=>{
+    var id = req.params.id;
+    Pergunta.findOne({
+        where:{id:id}
+    }).then((pergunta)=>{
+        if(pergunta != undefined){ //ACHOU PERGUNTA
+            res.render("pergunta",{
+                pergunta:pergunta
+            });
+        }else{//NAO ENCONTRADA
+            res.redirect("/");
+        }
+    });
+});
 
 app.listen(3000,(err)=>{
     if(err){
